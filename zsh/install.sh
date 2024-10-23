@@ -1,11 +1,5 @@
 #!/bin/bash
 
-usage() {
-    echo "Usage: $0 <zsh-config-file>"
-    echo "Example: $0 /path/to/zsh-config-file"
-    exit 1
-}
-
 detect_os() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         OS="linux"
@@ -23,7 +17,6 @@ install_zsh_mac() {
         echo "zsh is already installed."
     else
         echo "Installing zsh on macOS..."
-        brew update
         brew install zsh
     fi
 }
@@ -41,16 +34,9 @@ install_zsh_linux() {
 set_zsh_default() {
     if [ "$SHELL" != "$(command -v zsh)" ]; then
         echo "Setting zsh as the default shell..."
-        chsh -s "$(command -v zsh)"
+        chsh -s "$(command -v zsh)" $USER
     else
         echo "zsh is already the default shell."
-    fi
-}
-
-install_powerlevel10k() {
-    if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
-        echo "Installing Powerlevel10k theme..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
     fi
 }
 
@@ -60,6 +46,13 @@ install_oh_my_zsh() {
     else
         echo "Installing Oh My Zsh..."
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    fi
+}
+
+install_powerlevel10k() {
+    if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
+        echo "Installing Powerlevel10k theme..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
     fi
 }
 
@@ -81,14 +74,18 @@ apply_zsh_config() {
     echo "Applying zsh configuration from $config_file to ~/.zshrc"
     cp "$config_file" "$HOME/.zshrc"
 
-    # Apply changes immediately
-    source "$HOME/.zshrc"
-    echo "zsh configuration applied successfully."
+    # Source the new .zshrc file (make sure it's a Zsh shell)
+    if [[ "$SHELL" == "$(command -v zsh)" ]]; then
+        source "$HOME/.zshrc"
+    else
+        echo "Switch to Zsh to apply the new configuration."
+    fi
 }
 
 # Main script execution
 if [[ $# -ne 1 ]]; then
-    usage
+    echo "Usage: $0 <zsh-config-file>"
+    exit 1
 fi
 
 ZSH_CONFIG_FILE=$1
@@ -105,6 +102,8 @@ set_zsh_default
 
 install_oh_my_zsh
 
+install_powerlevel10k
+
 apply_zsh_config "$ZSH_CONFIG_FILE"
 
-echo "Installation complete. Please restart your terminal or open a new terminal window."
+echo "Zsh installation and configuration complete. Please restart your terminal or run 'exec zsh' to switch to Zsh."
