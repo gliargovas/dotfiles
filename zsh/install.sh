@@ -34,7 +34,7 @@ install_zsh_linux() {
 set_zsh_default() {
     if [ "$SHELL" != "$(command -v zsh)" ]; then
         echo "Setting zsh as the default shell..."
-        chsh -s "$(command -v zsh)" $USER
+        sudo chsh -s "$(command -v zsh)" $USER
     else
         echo "zsh is already the default shell."
     fi
@@ -49,10 +49,14 @@ install_oh_my_zsh() {
     fi
 }
 
+# Function to install Powerlevel10k theme
 install_powerlevel10k() {
+    ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
     if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
         echo "Installing Powerlevel10k theme..."
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+    else
+        echo "Powerlevel10k theme is already installed."
     fi
 }
 
