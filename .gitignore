@@ -1,0 +1,20 @@
+# Ignore SSH and GPG key files
+**/*.asc
+**/*.pub
+**/*.pem
+**/*.key
+**/*.gpg
+
+# Ignore backups
+**/*.bak
+
+# Ignore the local .gitconfig backup
+~/.gitconfig.bak
+
+# Ignore logs and temporary files
+**/*.log
+**/*.tmp
+**/*.swp
+
+# Ignore OS-specific files
+**/.DS_Store
