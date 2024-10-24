@@ -37,6 +37,16 @@ install_tmux_linux() {
     fi
 }
 
+install_tpm() {
+    # Ensure TPM (tmux plugin manager) is installed
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo "Installing tmux plugin manager (TPM)..."
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    else
+        echo "tmux plugin manager (TPM) is already installed."
+    fi
+}
+
 apply_tmux_config() {
     local config_file="$1"
 
@@ -50,11 +60,16 @@ apply_tmux_config() {
         mv "$HOME/.tmux.conf" "$HOME/.tmux.conf.bak"
     fi
 
-
     echo "Applying tmux configuration from $config_file to ~/.tmux.conf"
     cp "$config_file" "$HOME/.tmux.conf"
 
-    echo "tmux configuration applied successfully."
+    # Automatically source the new configuration if tmux is running
+    if tmux info >/dev/null 2>&1; then
+        tmux source-file "$HOME/.tmux.conf"
+        echo "tmux configuration reloaded in active session."
+    else
+        echo "tmux is not running. Configuration will be applied to new sessions."
+    fi
 }
 
 # Main script execution
@@ -72,6 +87,11 @@ elif [ "$OS" == "linux" ]; then
     install_tmux_linux
 fi
 
+# Install TPM (tmux plugin manager)
+install_tpm
+
+# Apply tmux configuration
 apply_tmux_config "$TMUX_CONFIG_FILE"
 
 echo "tmux installation and configuration complete. You can start tmux with 'tmux'."
+echo "If tmux is running, press 'Prefix + I' to install the plugins."
