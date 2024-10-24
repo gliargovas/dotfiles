@@ -1,0 +1,42 @@
+[user]
+    # If using this template, replace the following with your own name and email
+    name = gliargovas
+    email = gl2902@columbia.edu
+
+[core]
+    editor = nvim # vim, emacs, nano, code, etc
+    autocrlf = input # input, true, false
+    pager = delta # diff-so-fancy, delta
+
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    lg = log --oneline --graph --decorate --all
+
+[push]
+    default = simple # simple, matching, current, upstream
+
+[init]
+    defaultBranch = main
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    side-by-side = true
+
+    # delta detects terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+
+[commit]
+	template = ~/commit-template.txt
