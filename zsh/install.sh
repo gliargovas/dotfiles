@@ -49,16 +49,26 @@ install_oh_my_zsh() {
     fi
 }
 
-# Function to install Powerlevel10k theme
-install_powerlevel10k() { 
+# Function to install Oh My Zsh Plugins
+install_oh_my_zsh_plugins() {
     ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
-    if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
-        echo "Installing Powerlevel10k theme..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-    else
-        echo "Powerlevel10k theme is already installed."
+    
+    # Install zsh-autosuggestions
+    if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+        echo "Installing zsh-autosuggestions plugin..."
+        git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    fi
+    
+    # Install zsh-syntax-highlighting
+    if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+        echo "Installing zsh-syntax-highlighting plugin..."
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
     fi
     cp $P10K_CONFIG_FILE $HOME/.p10k.zsh`
+}
+
+install_packages() {
+    
 }
 
 apply_zsh_config() {
