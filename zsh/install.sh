@@ -50,7 +50,7 @@ install_oh_my_zsh() {
 }
 
 # Function to install Powerlevel10k theme
-install_powerlevel10k() {
+install_powerlevel10k() { 
     ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
     if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
         echo "Installing Powerlevel10k theme..."
@@ -58,6 +58,7 @@ install_powerlevel10k() {
     else
         echo "Powerlevel10k theme is already installed."
     fi
+    cp $P10K_CONFIG_FILE $HOME/.p10k.zsh`
 }
 
 apply_zsh_config() {
@@ -88,11 +89,12 @@ apply_zsh_config() {
 
 # Main script execution
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <zsh-config-file>"
+    echo "Usage: $0 <zsh-config-file> <p10k-config-file>"
     exit 1
 fi
 
 ZSH_CONFIG_FILE=$1
+P10K_CONFIG_FILE=$2
 
 detect_os
 
