@@ -98,32 +98,20 @@ apply_zsh_config() {
     fi
 }
 
-install_fonts() {
-    echo "Installing MesloLGS NF font..."
-
-    mkdir -p ~/.local/share/fonts
-
-    wget -P ~/.local/share/fonts \
-        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
-        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
-        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
-        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
-
-    # Refresh the font cache (Linux only)
-    if [[ "$OS" == "linux" ]]; then
-        fc-cache -fv
-    elif [[ "$OS" == "mac" ]]; then
-        echo "Please manually install the MesloLGS NF fonts on macOS by opening them in Finder."
+force_zsh_in_bashrc() {
+    # Add a command in .bashrc or .bash_profile to switch to Zsh if not already in Zsh
+    if [[ -f "$HOME/.bashrc" ]]; then
+        if ! grep -q "exec zsh" "$HOME/.bashrc"; then
+            echo "Adding Zsh auto-switch to .bashrc"
+            echo 'if [ -t 1 ] && [ -n "$BASH_VERSION" ] && command -v zsh >/dev/null 2>&1; then exec zsh; fi' >> "$HOME/.bashrc"
+        fi
+    elif [[ -f "$HOME/.bash_profile" ]]; then
+        if ! grep -q "exec zsh" "$HOME/.bash_profile"; then
+            echo "Adding Zsh auto-switch to .bash_profile"
+            echo 'if [ -t 1 ] && [ -n "$BASH_VERSION" ] && command -v zsh >/dev/null 2>&1; then exec zsh; fi' >> "$HOME/.bash_profile"
+        fi
     fi
-
-    echo "MesloLGS NF font installed. Please set it as your terminal's font."
 }
-
-# Main script execution
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <zsh-config-file> <p10k-config-file>"
-    exit 1
-fi
 
 ZSH_CONFIG_FILE=$1
 P10K_CONFIG_FILE=$2
@@ -145,5 +133,8 @@ install_oh_my_zsh
 install_oh_my_zsh_plugins
 
 apply_zsh_config "$ZSH_CONFIG_FILE"
+
+# Force Zsh for SSH logins
+force_zsh_in_bashrc
 
 echo "Zsh installation and configuration complete. Please restart your terminal or run 'exec zsh' to switch to Zsh."
