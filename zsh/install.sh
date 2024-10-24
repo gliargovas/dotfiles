@@ -52,23 +52,24 @@ install_oh_my_zsh() {
 # Function to install Oh My Zsh Plugins
 install_oh_my_zsh_plugins() {
     ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
-    
+        if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
+        echo "Installing Powerlevel10k theme..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+    else
+        echo "Powerlevel10k theme is already installed."
+    fi
+    cp $P10K_CONFIG_FILE $HOME/.p10k.zsh
     # Install zsh-autosuggestions
     if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
         echo "Installing zsh-autosuggestions plugin..."
         git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
     fi
-    
+
     # Install zsh-syntax-highlighting
     if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
         echo "Installing zsh-syntax-highlighting plugin..."
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
     fi
-    cp $P10K_CONFIG_FILE $HOME/.p10k.zsh`
-}
-
-install_packages() {
-    
 }
 
 apply_zsh_config() {
@@ -97,8 +98,29 @@ apply_zsh_config() {
     fi
 }
 
+install_fonts() {
+    echo "Installing MesloLGS NF font..."
+
+    mkdir -p ~/.local/share/fonts
+
+    wget -P ~/.local/share/fonts \
+        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
+        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf \
+        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf \
+        https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
+
+    # Refresh the font cache (Linux only)
+    if [[ "$OS" == "linux" ]]; then
+        fc-cache -fv
+    elif [[ "$OS" == "mac" ]]; then
+        echo "Please manually install the MesloLGS NF fonts on macOS by opening them in Finder."
+    fi
+
+    echo "MesloLGS NF font installed. Please set it as your terminal's font."
+}
+
 # Main script execution
-if [[ $# -ne 1 ]]; then
+if [[ $# -ne 2 ]]; then
     echo "Usage: $0 <zsh-config-file> <p10k-config-file>"
     exit 1
 fi
@@ -107,6 +129,8 @@ ZSH_CONFIG_FILE=$1
 P10K_CONFIG_FILE=$2
 
 detect_os
+
+install_fonts
 
 if [ "$OS" == "mac" ]; then
     install_zsh_mac
@@ -118,7 +142,7 @@ set_zsh_default
 
 install_oh_my_zsh
 
-install_powerlevel10k
+install_oh_my_zsh_plugins
 
 apply_zsh_config "$ZSH_CONFIG_FILE"
 
