@@ -118,8 +118,6 @@ P10K_CONFIG_FILE=$2
 
 detect_os
 
-install_fonts
-
 if [ "$OS" == "mac" ]; then
     install_zsh_mac
 elif [ "$OS" == "linux" ]; then
